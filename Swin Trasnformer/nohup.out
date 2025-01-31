@@ -1,0 +1,20 @@
+Traceback (most recent call last):
+  File "train.py", line 160, in <module>
+    main(opt)
+  File "train.py", line 35, in main
+    tb_writer = SummaryWriter()
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/torch/utils/tensorboard/writer.py", line 246, in __init__
+    self._get_file_writer()
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/torch/utils/tensorboard/writer.py", line 277, in _get_file_writer
+    self.log_dir, self.max_queue, self.flush_secs, self.filename_suffix
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/torch/utils/tensorboard/writer.py", line 76, in __init__
+    log_dir, max_queue, flush_secs, filename_suffix
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/tensorboard/summary/writer/event_file_writer.py", line 72, in __init__
+    tf.io.gfile.makedirs(logdir)
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/io/gfile.py", line 900, in makedirs
+    return get_filesystem(path).makedirs(path)
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/site-packages/tensorboard/compat/tensorflow_stub/io/gfile.py", line 201, in makedirs
+    os.makedirs(path, exist_ok=True)
+  File "/home/zx3srs/.conda/envs/cbir/lib/python3.7/os.py", line 223, in makedirs
+    mkdir(name, mode)
+PermissionError: [Errno 13] Permission denied: 'runs/Dec30_23-02-00_zx3srs-Precision-7920-Tower'
