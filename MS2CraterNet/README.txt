@@ -1,0 +1,1 @@
+Obtain the complete ultralytics code folder from https://github.com/ultralytics/ultralytics, and then add or replace the Python files from this folder and its subfolders into the ultralytics code folder.
