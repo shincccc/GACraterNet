@@ -42,23 +42,10 @@ from ultralytics.nn.modules import (
     ResNetLayer,
     RTDETRDecoder,
     Segment,
-    MyC2f,
-    MyC2f1,
     AttentionConcat,
-    SPDConv,
-    flood_space_attention,
     CBAM,
     SSFF,
-    C2f_Ghostblockv2,
-    C2f_RepLKBlock,
-    CSwinTRv2,
     C2f_DCN,
-    C2f_Context,
-    ContextGuidedBlock_Down,
-    SW,
-    W_SSFF,
-    ADD,
-    B_SSFF,
 )
 from ultralytics.utils import DEFAULT_CFG_DICT, DEFAULT_CFG_KEYS, LOGGER, colorstr, emojis, yaml_load
 from ultralytics.utils.checks import check_requirements, check_suffix, check_yaml
@@ -793,8 +780,6 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             BottleneckCSP,
             C1,
             C2,
-            MyC2f,
-            MyC2f1,
             C2f,
             C3,
             C3TR,
@@ -804,14 +789,13 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             C3x,
             RepC3,
             C2f_DCN,
-            C2f_Context,
         ):
             c1, c2 = ch[f], args[0]
             if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
                 c2 = make_divisible(min(c2, max_channels) * width, 8)
 
             args = [c1, c2, *args[1:]]
-            if m in (BottleneckCSP, C1, C2, C2f, C3, C3TR, C3Ghost, MyC2f, MyC2f1, C3x, RepC3, C2f_Context, C2f_DCN):
+            if m in (BottleneckCSP, C1, C2, C2f, C3, C3TR, C3Ghost, C3x, RepC3, C2f_Context, C2f_DCN):
                 args.insert(2, n)  # number of repeats
                 n = 1
         elif m is AIFI:
@@ -823,8 +807,6 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
                 args.insert(4, n)  # number of repeats
                 n = 1
         elif m is AttentionConcat:
-            c2 = sum(ch[x] for x in f)
-        elif m is flood_space_attention:
             c2 = sum(ch[x] for x in f)
         elif m is ResNetLayer:
             c2 = args[1] if args[3] else args[1] * 4
@@ -838,53 +820,14 @@ def parse_model(d, ch, verbose=True):  # model_dict, input_channels(3)
             args.append([ch[x] for x in f])
             if m is Segment:
                 args[2] = make_divisible(min(args[2], max_channels) * width, 8)
-        elif m is RTDETRDecoder:  # special case, channels arg must be passed in index 1
-            args.insert(1, [ch[x] for x in f])
-        elif m is SPDConv:
-            c1 = ch[f] #前一层
-            c2 = ch[f]*2 #前一层的2倍
-            args = [c1]
         elif m is CBAM:
             c1= ch[f]
             args = [c1]
-        elif m is C2f_Ghostblockv2:
-            c1, c2 = ch[f], args[0]
-            if c2 != nc:  # if not output
-                c2 = make_divisible(min(c2, max_channels) * width, 8)
-            args = [c1, c2, *args[1:]]
-            args.insert(2, n)  # number of repeats
-            n = 1
         elif m is SSFF:
             c2 = sum(ch[x] for x in f)
-        elif m is C2f_RepLKBlock:
-            c1, c2 = ch[f], args[0]
-            if c2 != nc:  # if not output
-                c2 = make_divisible(min(c2, max_channels) * width, 8)
-            args = [c1, c2, *args[1:]]
-            args.insert(2, n)  # number of repeats
-            n = 1
-        elif m is CSwinTRv2:
-            c1, c2 = ch[f], args[0]
-            if c2 != nc:  # if c2 not equal to number of classes (i.e. for Classify() output)
-                c2 = make_divisible(min(c2, max_channels) * width, 8)
-            args = [c1, c2, *args[1:]]
-            args.insert(2, n)  # number of repeats
-            n = 1
-        elif m is ContextGuidedBlock_Down:
-            c2 = ch[f]
-            args = [c2, *args]
-        elif m is W_SSFF:
-            c2 = sum(ch[x] for x in f[:3])
-        elif m is SW:
-            c1, c2 = ch[f], args[0]
-            args = [c1, c2]
         elif m is ADD:
             c2 = ch[f[0]]
             # print("ch(f[0]):", ch[f[0]])
-        elif m is B_SSFF:
-            c1 = ch[f[0]]
-            c2 = args[0]
-            args = [c1, c2]
         else:
             c2 = ch[f]
         m_ = nn.Sequential(*(m(*args) for _ in range(n))) if n > 1 else m(*args)  # module
