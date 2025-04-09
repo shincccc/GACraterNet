@@ -3,12 +3,11 @@ import cv2
 import os
 import numpy as np
 import sys
-sys.path.append('/home/xgq/Desktop/HF/yunshi')
+# sys.path.append('/home/xgq/Desktop/HF/yunshi')
 from get_terr_factors import get_terr_factors
 from osgeo import gdal
 from shapely.geometry import Point
 import json
-from pos_opt import pos_opt
 import re
 import pandas as pd
 from segment_and_reposition import sam_pos_opt
